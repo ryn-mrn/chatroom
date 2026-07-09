@@ -10,5 +10,6 @@ public enum MessageType{
     PROFILE_OPEN,
     ADD,
     BLOCK,
-    REMOVE
+    REMOVE,
+    PICTURE
 }

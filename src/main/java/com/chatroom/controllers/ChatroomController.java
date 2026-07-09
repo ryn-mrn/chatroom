@@ -42,6 +42,7 @@ public class ChatroomController implements ClientAware {
     private String sessionID;
     private String sender = null;
 
+
     @Override
     public void setClient(Client client) {
         this.client = client;
@@ -85,6 +86,8 @@ public class ChatroomController implements ClientAware {
         this.messageArea.setTextFormatter(new TextFormatter<>(filter));
         this.messageArea.setOnScroll(Event::consume);
     }
+
+
 
     public void addMessage(String raw){
         //split the message
@@ -140,7 +143,7 @@ public class ChatroomController implements ClientAware {
     protected void openProfilePicture(){
         try {
             FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/com/chatroom/components/profilePicture.fxml"));
+                    getClass().getResource("/com/chatroom/components/profile-picture.fxml"));
             Stage profileStage = loader.load();
             ProfileController controller = loader.getController();
             controller.setUsername(username);
@@ -149,4 +152,6 @@ public class ChatroomController implements ClientAware {
             throw new RuntimeException(e);
         }
     }
+
+
 }

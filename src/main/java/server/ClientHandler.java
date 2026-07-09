@@ -10,10 +10,7 @@ import server.service.AuthService;
 import server.service.FriendService;
 import server.service.MessageService;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -119,6 +116,7 @@ public class ClientHandler implements Runnable {
             case ADD -> handleAdd(message, out);
             case BLOCK -> handleBlock(message, out);
             case REMOVE -> handleRemove(message, out);
+            case PICTURE -> handlePicture(message, out);
         }
     }
 
@@ -230,5 +228,22 @@ public class ClientHandler implements Runnable {
         } else {
             log.debug("Error removing {} and {}", ctx.clientID(), ctx.profileID());
         }
+    }
+
+    // for profile pictures at the moment
+    private void handlePicture(Message message, PrintWriter out){
+        // needs serialized - deserialized. Server should have a GUI itself...
+        log.debug("Picture sent");
+
+        Optional<Session> validated = authService.validateSession(message.getSessionID());
+        if (validated.isEmpty()) {
+            out.println("SESSION_EXPIRED");
+            return;
+        }
+
+        String username = validated.get().getUsername();
+        String base64image = (String) message.getPayload().get("picture");
+        String fileName = (String) message.getPayload().get("filename");
+        // handle the image to the database
     }
 }

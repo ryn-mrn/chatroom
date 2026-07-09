@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane fx:id="ap" prefHeight="180.0" prefWidth="132.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.chatroom.controllers.ProfilePictureController">
+   <children>
+      <Button fx:id="openFileButton" layoutX="20.0" layoutY="26.0" onAction="#addFile" mnemonicParsing="false" text="Open file" />
+      <Label layoutX="18.0" layoutY="58.0" prefHeight="17.0" prefWidth="65.0" text="File name" />
+      <ImageView fitHeight="80.0" fitWidth="80.0" layoutX="25.0" layoutY="86.0" pickOnBounds="true" preserveRatio="true" />
+   </children>
+</AnchorPane>

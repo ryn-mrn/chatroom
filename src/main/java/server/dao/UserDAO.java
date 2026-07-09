@@ -18,6 +18,8 @@ public class UserDAO {
         this.conn = DatabaseConnection.getInstance().getConnection();
     }
 
+
+// profile pictures -- store the file path only and then store the image in a different place
     public boolean addUser(String username, String password) {
         String sql = "INSERT INTO Users (username, password) VALUES (?, ?)";
 
