@@ -58,6 +58,16 @@ public class DatabaseConnection {
         // so that when a new user joins these recent messages can be loaded in so the user can
         // join the conversation
 
+        // create profile picture table
+        String profilePictureTable = """
+               CREATE TABLE IF NOT EXISTS profile_pictures (
+                  user_id INTEGER NOT NULL,
+                  file_path TEXT NOT NULL,
+                  uploaded_at TEXT NOT NULL DEFAULT (datetime('now')),
+                  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+               )
+               """;
+
 
         // timestamp for getting the correct time
         String messagesTable = """
@@ -83,6 +93,8 @@ public class DatabaseConnection {
         try (Statement stmt = conn.createStatement()) {
             stmt.execute(usersTable);
             System.out.println("Users table initialized.");
+            stmt.execute(profilePictureTable);
+            System.out.println("Profile picture table initialized.");
             stmt.execute(messagesTable);
             System.out.println("Messages table initialized");
             stmt.execute(friendsTable);

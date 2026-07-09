@@ -242,8 +242,12 @@ public class ClientHandler implements Runnable {
         }
 
         String username = validated.get().getUsername();
+        // add to profile pictures database
+        int userID = authService.getUserID(username);
         String base64image = (String) message.getPayload().get("picture");
         String fileName = (String) message.getPayload().get("filename");
         // handle the image to the database
+        // add the file path, user id and date of creation to a profile picture table
+        // save the photo to the data/profile-pictures
     }
 }
