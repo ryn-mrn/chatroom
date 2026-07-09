@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<HBox maxHeight = "-Infinity"
+      xmlns="http://javafx.com/javafx/17.0.12"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.chatroom.controllers.MessageController">
+    <children>
+          <Button fx:id="profileButton"
+                  mnemonicParsing="false"
+                  prefHeight="50.0" prefWidth="50.0"
+                  onAction="#openProfile"/>
+          <Label fx:id="messageBox"
+                 maxWidth="300.0" minWidth="80.0"
+                 style="-fx-background-color: green;"
+                 styleClass="message-box"
+                 text="Label" wrapText="true" />
+    </children>
+</HBox>

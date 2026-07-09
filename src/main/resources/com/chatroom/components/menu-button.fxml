@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+
+<Button
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.chatroom.controllers.MenuController"
+            prefHeight="31.0" prefWidth="56.0"
+            text="Back"
+            onAction="#menuScene"
+            styleClass="menu-button"
+/>

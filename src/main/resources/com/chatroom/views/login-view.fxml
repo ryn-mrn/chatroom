@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity"
+            minHeight="-Infinity" minWidth="-Infinity"
+            prefHeight="600.0" prefWidth="800.0"
+            stylesheets="@../styles.css"
+            xmlns="http://javafx.com/javafx/17.0.12"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.chatroom.controllers.LoginController">
+   <fx:include source="../components/menu-button.fxml"/>
+   <children>
+      <ImageView fitHeight="615.0" fitWidth="800.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../../images/background_image.png" />
+         </image>
+      </ImageView>
+
+
+      <fx:include source="../components/menu-button.fxml"
+                  AnchorPane.topAnchor="14.0"
+                  AnchorPane.leftAnchor="14.0"/>
+
+      <TextField fx:id="usernameLoginField" layoutX="251.0" layoutY="223.0" promptText="Username" />
+      <PasswordField fx:id="passwordLoginField" layoutX="251.0" layoutY="255.0" promptText="Password" />
+      <Button fx:id="loginButton" layoutX="284.0" layoutY="288.0" mnemonicParsing="false" onAction="#loginFunction" prefHeight="25.0" prefWidth="83.0" styleClass="menu-button" text="Login" />
+   </children>
+</AnchorPane>

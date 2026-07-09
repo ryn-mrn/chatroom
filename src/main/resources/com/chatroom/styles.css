@@ -1,0 +1,22 @@
+.root {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.menu-button {
+    -fx-background-color: #E0E0E0;
+}
+
+.menu-button:hover {
+                       -fx-background-color: #A0A0A0;
+                       -fx-scale-x: 1.05;
+                       -fx-scale-y: 1.05;
+                   }
+
+#usernameLabel {
+    -fx-background-color: #FFFFFF;
+}
+
+#messageArea .scroll-bar:vertical {
+    -fx-opacity: 0;
+}
