@@ -21,7 +21,7 @@ public class UserDAO {
 
 // profile pictures -- store the file path only and then store the image in a different place
     public boolean addUser(String username, String password) {
-        String sql = "INSERT INTO Users (username, password) VALUES (?, ?)";
+        String sql = "INSERT INTO users (username, password) VALUES (?, ?)";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, username);
@@ -40,7 +40,7 @@ public class UserDAO {
 
     public List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
-        String sql = "SELECT * FROM Users";
+        String sql = "SELECT * FROM users";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {

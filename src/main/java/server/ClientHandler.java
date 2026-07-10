@@ -9,6 +9,7 @@ import server.models.Session;
 import server.service.AuthService;
 import server.service.FriendService;
 import server.service.MessageService;
+import server.service.ProfileService;
 
 import java.io.*;
 import java.net.Socket;
@@ -24,6 +25,7 @@ public class ClientHandler implements Runnable {
     private final AuthService authService;
     private final FriendService friendService;
     private final MessageService messageService;
+    private final ProfileService profileService;
     private String clientUsername = "";
     private Session session;
     private record FriendContext(int clientID, int profileID, FriendStatus status) {}
@@ -38,12 +40,14 @@ public class ClientHandler implements Runnable {
     public ClientHandler(Socket socket, List<PrintWriter> clients,
                          AuthService authService,
                          FriendService friendService,
-                         MessageService messageService) {
+                         MessageService messageService,
+                         ProfileService profileService) {
         this.clientSocket = socket;
         this.clients = clients;
         this.authService = authService;
         this.friendService = friendService;
         this.messageService = messageService;
+        this.profileService = profileService;
     }
 
     @Override
@@ -240,12 +244,28 @@ public class ClientHandler implements Runnable {
             out.println("SESSION_EXPIRED");
             return;
         }
-
         String username = validated.get().getUsername();
-        // add to profile pictures database
+        // used to track which profile picture is who
         int userID = authService.getUserID(username);
+        // use this to save to folder that holds the pictures
         String base64image = (String) message.getPayload().get("picture");
+        // removes profile picture
+        // use this to save the filename of the pictures to the database
         String fileName = (String) message.getPayload().get("filename");
+        if(base64image.equals("remove")){
+            System.out.println("Removing photo: "+ profileService.removeProfilePicture(userID));
+            out.println("REMOVED_PHOTO");
+        } else {
+            // save the photo
+            profileService.savePhoto(base64image, fileName);
+        }
+        // checks if the picture exists or not and decides from there
+        if(profileService.checkProfilePicture(userID)){
+            System.out.println("Changing picture: " + profileService.changeProfilePicture(userID, fileName));
+        } else {
+            System.out.println("Adding picture: " + profileService.addProfilePicture(userID, fileName));
+        }
+        out.println("CHANGED_PHOTO");
         // handle the image to the database
         // add the file path, user id and date of creation to a profile picture table
         // save the photo to the data/profile-pictures

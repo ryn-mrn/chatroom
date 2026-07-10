@@ -3,13 +3,16 @@ package com.chatroom.controllers;
 import com.chatroom.models.Message;
 import com.chatroom.network.Client;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import java.awt.*;
+import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -19,15 +22,23 @@ import java.util.Map;
 
 public class ProfilePictureController implements ClientAware {
 
-    private Desktop desktop = Desktop.getDesktop();
+    private final Desktop desktop = Desktop.getDesktop();
 
+    @FXML
+    private ImageView profilePicture;
     @FXML
     private AnchorPane ap;
     @FXML
     private Button openFileButton;
+    @FXML
+    private Button removePictureButton;
 
     private Client client;
     private String username;
+
+    public void setUsername(String username){
+        this.username = username;
+    }
 
     @Override
     public void setClient(Client client){ this.client = client; }
@@ -40,15 +51,46 @@ public class ProfilePictureController implements ClientAware {
         configureFileChooser(fileChooser);
         fileChooser.setTitle("Choose your picture");
         File file = fileChooser.showOpenDialog(stage);
+        Image image = new Image(file.getAbsolutePath());
         if(file != null){
             // save to the computer and send to the server
-            openFile(file);
+            sendFile(file);
+            client.setOneTimeListener(response -> {
+                Platform.runLater(() -> {
+                    // when the server says ready then the photo is changed
+                    if(response.equals("CHANGED_PHOTO")){
+                        profilePicture.setImage(image);
+                    }
+                });
+            });
         }
     }
 
-    public void setUsername(String username){
-        this.username = username;
+
+    @FXML
+    protected void removePicture(){
+        Message message = new Message();
+        message.setType("PICTURE");
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("username", username);
+        payload.put("picture", "remove");
+        message.setPayload(payload);
+        try {
+            client.sendMessage(message.serialize());
+            // get response
+            client.setOneTimeListener(response -> {
+                Platform.runLater(() -> {
+                    if(response.equals("REMOVED_PHOTO")){
+                        // remove the image only after the server says ready
+                        profilePicture.setImage(null);
+                    }
+                });
+            });
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
+
 
     // adds in a configuration so that only images are selected and the
     // directory starts at the user's home
@@ -91,4 +133,5 @@ public class ProfilePictureController implements ClientAware {
             throw new RuntimeException(e);
         }
     }
+
 }

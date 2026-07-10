@@ -9,6 +9,7 @@ module com.chatroom {
     requires net.bytebuddy;
     requires org.slf4j;
     requires java.desktop;
+    requires jaxb.api;
 
     opens com.chatroom to javafx.fxml;
     exports com.chatroom;

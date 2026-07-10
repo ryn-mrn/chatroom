@@ -69,7 +69,7 @@ public class FriendsDAO {
     // checks if the user is added, if they are, remove them then block them
     public boolean blockUser(int client, int profile){
         String sql = "INSERT INTO friends VALUES(?, ?, 'blocked')";
-        if(checkStatus(client, profile).equals("ADDED")){
+        if(checkStatus(client, profile).equals(FriendStatus.ADDED)){
             removeUser(client);
         }
         try {

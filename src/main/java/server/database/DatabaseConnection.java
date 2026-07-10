@@ -47,7 +47,7 @@ public class DatabaseConnection {
     private void initializeTables() {
         // Fixed: AUTOINCREMENT should be one word in SQLite
         String usersTable = """
-            CREATE TABLE IF NOT EXISTS Users (
+            CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 username TEXT NOT NULL UNIQUE,
                 password TEXT NOT NULL
@@ -67,7 +67,6 @@ public class DatabaseConnection {
                   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
                )
                """;
-
 
         // timestamp for getting the correct time
         String messagesTable = """

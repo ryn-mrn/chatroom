@@ -87,8 +87,6 @@ public class ChatroomController implements ClientAware {
         this.messageArea.setOnScroll(Event::consume);
     }
 
-
-
     public void addMessage(String raw){
         //split the message
         System.out.println("lastSender: " + sender);
@@ -152,6 +150,4 @@ public class ChatroomController implements ClientAware {
             throw new RuntimeException(e);
         }
     }
-
-
 }
