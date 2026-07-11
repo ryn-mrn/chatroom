@@ -4,7 +4,9 @@ import server.dao.UserDAO;
 import server.models.Session;
 import server.models.User;
 
+import java.util.ArrayList;
 import java.util.Optional;
+import java.util.Set;
 
 public class AuthService {
 
@@ -44,6 +46,18 @@ public class AuthService {
     public Session createSession(String username) { return sessionManager.createSession(username); }
     public Optional<Session> validateSession(String token) { return sessionManager.validateSession(token); }
     public void invalidateSession(String token) { sessionManager.invalidateSession(token); }
+    public Set<String> getLoggedInUsernames(){
+        return sessionManager.getLoggedInUsers();
+    }
+
+    public ArrayList<Integer> getLoggedInUsers(){
+        Set<String> loggedInUsers = sessionManager.getLoggedInUsers();
+        ArrayList<Integer> userIDs = new ArrayList<>();
+        for(String user : loggedInUsers){
+            userIDs.add(userDAO.getUserID(user));
+        }
+        return userIDs;
+    }
 
     // handleLogin, handleRegister
     public String handleLogin(String username, String password){

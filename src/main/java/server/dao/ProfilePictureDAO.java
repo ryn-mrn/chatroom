@@ -1,8 +1,12 @@
 package server.dao;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Base64;
+import java.util.List;
 
 import server.database.DatabaseConnection;
 
@@ -62,4 +66,25 @@ public class ProfilePictureDAO {
             throw new RuntimeException(e);
         }
     }
+
+    public String getProfilePicturePath(int userID){
+        String sql = "SELECT * FROM profile_pictures WHERE user_id = ?";
+
+        // get the filepath then get the image to send to the user
+        try (PreparedStatement stmt = conn.prepareStatement(sql)){
+            stmt.setInt(1, userID);
+            try (ResultSet rs = stmt.executeQuery()){
+                if(rs.next()){
+                    // got the file path
+                    return rs.getString("file_path");
+                }
+            } catch (SQLException e){
+                throw new RuntimeException(e);
+            }
+        } catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+        return "No path found";
+    }
+
 }

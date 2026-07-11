@@ -1,11 +1,9 @@
 package server.service;
 
 import server.dao.ProfilePictureDAO;
+import server.dao.UserDAO;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.Base64;
 
 // may add changing names bios, etc, pictures for now
@@ -13,6 +11,7 @@ import java.util.Base64;
 public class ProfileService {
 
     private final ProfilePictureDAO profilePictureDAO = new ProfilePictureDAO();
+    private final UserDAO userDAO = new UserDAO();
 
     public boolean checkProfilePicture(int userID) {
         System.out.println("Checking if profile picture exists for: " + userID);
@@ -48,5 +47,28 @@ public class ProfileService {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public String getPhoto(int userID) {
+        String filePath = profilePictureDAO.getProfilePicturePath(userID);
+        File imageFile = new File(filePath);
+        try {
+            // read the file to bytes
+            FileInputStream imageInFile = new FileInputStream(imageFile);
+            // save as bytes
+            byte[] imageData = new byte[(int) imageFile.length()];
+            // add the saved stream to the bytes var
+            imageInFile.read(imageData);
+            // convert the bytes to a string
+            String imageDataToString = Base64.getEncoder().encodeToString(imageData);
+            // return the base64 string
+            return imageDataToString;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String getUsername(int userID){
+        return userDAO.getUsername(userID);
     }
 }

@@ -56,6 +56,14 @@ public class ChatroomController implements ClientAware {
         setTextArea();
         setClient(c);
         // set listener first to avoid race conditions
+        // this only adds messages -- need to implement so it sends over users or have the client request it
+        client.setMessageListener(message -> {
+            System.out.println("Loading profiles");
+            Platform.runLater(() -> {
+                // add profiles pictures to users
+                addProfiles(message);
+            });
+        });
         client.setMessageListener(message -> {
             System.out.println("Listener fired");
             Platform.runLater(() -> {
@@ -65,6 +73,10 @@ public class ChatroomController implements ClientAware {
         });
         // gets the username for printing message properly
         System.out.println(this.username);
+        // request profiles of users
+        Message profileMessage = new Message();
+        profileMessage.setType("PROFILE_REQUEST");
+        client.sendMessage(profileMessage.serialize());
         // let the server know client in server so send all messages
         Message chatroomMessage = new Message();
         chatroomMessage.setType("CHATROOM");
@@ -134,6 +146,10 @@ public class ChatroomController implements ClientAware {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void addProfiles(String profile){
+
     }
 
     // opens a screen to set profile picture

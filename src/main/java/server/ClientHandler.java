@@ -14,8 +14,7 @@ import server.service.ProfileService;
 import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class ClientHandler implements Runnable {
 
@@ -121,6 +120,7 @@ public class ClientHandler implements Runnable {
             case BLOCK -> handleBlock(message, out);
             case REMOVE -> handleRemove(message, out);
             case PICTURE -> handlePicture(message, out);
+            case PROFILE_REQUEST -> handleProfileRequest(message, out);
         }
     }
 
@@ -257,7 +257,7 @@ public class ClientHandler implements Runnable {
             out.println("REMOVED_PHOTO");
         } else {
             // save the photo
-            profileService.savePhoto(base64image, fileName);
+            System.out.println("Photo saved: " + profileService.savePhoto(base64image, fileName));
         }
         // checks if the picture exists or not and decides from there
         if(profileService.checkProfilePicture(userID)){
@@ -269,5 +269,25 @@ public class ClientHandler implements Runnable {
         // handle the image to the database
         // add the file path, user id and date of creation to a profile picture table
         // save the photo to the data/profile-pictures
+    }
+
+
+    // get the current users in the session and send only those profile pictures
+    private void handleProfileRequest(Message message, PrintWriter out){
+        // get clients and their ids and send a message with their avatar
+        ArrayList<Integer> loggedInUsers = authService.getLoggedInUsers();
+        Map<String, Object> profileUsers = new HashMap<>();
+        // get list of the profiles
+        for(int userID : loggedInUsers) {
+            // map of username --- picture
+            profileUsers.put(profileService.getUsername(userID), profileService.getPhoto(userID));
+        }
+        // create the message by iterating through
+        // then serialize and send
+        for(var item : profileUsers.entrySet()){
+            Message msg = new Message();
+            message.payloadToJson((Map<String, Object>) item);
+            out.println(message);
+        }
     }
 }

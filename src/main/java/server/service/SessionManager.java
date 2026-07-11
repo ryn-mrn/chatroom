@@ -66,6 +66,10 @@ public class SessionManager {
         return loggedInUsers.contains(username);
     }
 
+    public Set<String> getLoggedInUsers(){
+        return loggedInUsers;
+    }
+
     private void removeLoggedInUser(String username){
         loggedInUsers.remove(username);
     }
