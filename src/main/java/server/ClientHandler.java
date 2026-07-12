@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import server.models.FriendStatus;
 import server.models.Message;
+import server.models.MessageType;
 import server.models.Session;
 import server.service.AuthService;
 import server.service.FriendService;
@@ -276,18 +277,16 @@ public class ClientHandler implements Runnable {
     private void handleProfileRequest(Message message, PrintWriter out){
         // get clients and their ids and send a message with their avatar
         ArrayList<Integer> loggedInUsers = authService.getLoggedInUsers();
-        Map<String, Object> profileUsers = new HashMap<>();
         // get list of the profiles
         for(int userID : loggedInUsers) {
             // map of username --- picture
-            profileUsers.put(profileService.getUsername(userID), profileService.getPhoto(userID));
-        }
-        // create the message by iterating through
-        // then serialize and send
-        for(var item : profileUsers.entrySet()){
             Message msg = new Message();
-            message.payloadToJson((Map<String, Object>) item);
-            out.println(message);
+            message.setType(MessageType.PICTURE);
+            Map<String, Object> payload = new HashMap<>();
+            payload.put("username", profileService.getUsername(userID));
+            payload.put("photo", profileService.getPhoto(userID));
+            msg.setPayload(payload);
+            out.println(msg);
         }
     }
 }

@@ -2,18 +2,24 @@ package com.chatroom.controllers;
 
 import com.chatroom.models.Message;
 import com.chatroom.network.Client;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.UnaryOperator;
@@ -41,6 +47,7 @@ public class ChatroomController implements ClientAware {
     private Client client;
     private String sessionID;
     private String sender = null;
+    private Map<String, Image> imageCache;
 
 
     @Override
@@ -53,6 +60,7 @@ public class ChatroomController implements ClientAware {
         this.username = username;
         this.usernameLabel.setText(username);
         this.messageArea.setWrapText(true);
+        this.imageCache = new HashMap<String, Image>();
         setTextArea();
         setClient(c);
         // set listener first to avoid race conditions
@@ -118,8 +126,10 @@ public class ChatroomController implements ClientAware {
                     getClass().getResource("/com/chatroom/components/message-box.fxml"));
             Node messageNode = loader.load();
             MessageController controller = loader.getController();
+            Image image = imageCache.get(username);
             controller.setUsername(username);
             controller.setText(username, message, isSender, doubleMessage);
+            controller.setPicture(image);
             chatBox.getChildren().add(messageNode);
             // adding a scroll area for multiple messages
             Platform.runLater(() -> messageScroll.setVvalue(1.0));
@@ -148,8 +158,25 @@ public class ChatroomController implements ClientAware {
         }
     }
 
-    public void addProfiles(String profile){
 
+    // cache the photos
+    public void addProfiles(String profile){
+        try {
+            Message profilePhoto = Message.deserialize(profile);
+            // get the username and base64 photo
+            String username = profilePhoto.getBlank("username");
+            String base64Image = profilePhoto.getBlank("photo");
+            // convert base64 to image
+            if(!imageCache.containsKey("username")){
+                byte[] imageBytes = Base64.getDecoder().decode(base64Image);
+                Image profilePicture = new Image(new ByteArrayInputStream(imageBytes));
+
+                imageCache.put(username, profilePicture);
+            }
+
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     // opens a screen to set profile picture

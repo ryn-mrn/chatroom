@@ -72,6 +72,8 @@ public class Message {
         this.type = type;
     }
 
+    public void setPayload(Map<String, Object> payload) { this.payload = payload; }
+
     public String getSessionID(){
         return this.token;
     }

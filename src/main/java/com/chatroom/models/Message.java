@@ -86,6 +86,11 @@ public class Message {
         return (String) getPayload().get("password");
     }
 
+    public String getBlank(String blank){
+        if (payload == null) return null;
+        return (String) getPayload().get(blank);
+    }
+
     public String getMessage(){
         return (String) getPayload().get("message");
     }

@@ -74,20 +74,6 @@ public class MessageController {
         messageBox.setWrapText(true);
     }
 
-    //decode the picture then add it to the profile
-    //base 64 into javafx image
-    public Image getPicture(String base64, String filename){
-        byte[] imageBytes = Base64.getDecoder().decode(base64);
-        File file = new File("client-data/profile-pictures/"+filename);
-        try(FileOutputStream outputStream = new FileOutputStream(file)){
-            outputStream.write(imageBytes);
-            System.out.println("Image written");
-            return new Image(file.getAbsolutePath());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     // sets the picture in the message
     public void setPicture(Image profilePicture){
         ImageView view = new ImageView(profilePicture);
