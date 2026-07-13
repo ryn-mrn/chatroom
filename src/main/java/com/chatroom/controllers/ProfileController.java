@@ -2,6 +2,10 @@ package com.chatroom.controllers;
 
 import com.chatroom.models.Message;
 import com.chatroom.network.Client;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -31,6 +35,7 @@ public class ProfileController implements ClientAware, Initializable {
 
     private Client client;
     private boolean blocked;
+    private static final Logger log = LoggerFactory.getLogger(ProfileController.class);
 
     @Override
     public void setClient(Client client) {
@@ -42,9 +47,12 @@ public class ProfileController implements ClientAware, Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         //send message to server for a profile request
         messageButton.setVisible(false);
+    }
+
+    public void initData(Client c){
+        setClient(c);
         Map<String, Object> payload = new HashMap<>();
         payload.put("username", usernameLabel.getText());
-        client.sendMessage("PROFILE_OPEN", null, payload);
         client.setMessageListener(response -> {
                     Platform.runLater(() -> {
                         switch(response){
@@ -64,7 +72,10 @@ public class ProfileController implements ClientAware, Initializable {
                         }
                     });
                 }
-            );
+        );
+        log.info("Message listener set.");
+        client.sendMessage("PROFILE_OPEN", null, payload);
+        log.info("'PROFILE_OPEN' sent to the server.");
     }
 
     @FXML

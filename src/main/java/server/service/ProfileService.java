@@ -51,18 +51,26 @@ public class ProfileService {
 
     public String getPhoto(int userID) {
         String filePath = profilePictureDAO.getProfilePicturePath(userID);
+
+        if (filePath == null || filePath.isBlank()) {
+            return "no photo";
+        }
+
         File imageFile = new File(filePath);
-        try {
+        if(!imageFile.exists()) {
+
+            System.out.println("Missing photo: " + filePath);
+            return "no photo";
+        }
+        try (FileInputStream imageInFile = new FileInputStream(imageFile)){
             // read the file to bytes
-            FileInputStream imageInFile = new FileInputStream(imageFile);
             // save as bytes
-            byte[] imageData = new byte[(int) imageFile.length()];
-            // add the saved stream to the bytes var
+            byte[] imageData = imageInFile.readAllBytes();
+                // add the saved stream to the bytes var
             imageInFile.read(imageData);
-            // convert the bytes to a string
-            String imageDataToString = Base64.getEncoder().encodeToString(imageData);
-            // return the base64 string
-            return imageDataToString;
+                // convert the bytes to a string
+                // return the base64 string
+            return Base64.getEncoder().encodeToString(imageData);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

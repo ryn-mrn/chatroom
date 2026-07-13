@@ -84,7 +84,7 @@ public class ProfilePictureDAO {
         } catch (SQLException e){
             throw new RuntimeException(e);
         }
-        return "No path found";
+        return null;
     }
 
 }

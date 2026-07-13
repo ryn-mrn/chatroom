@@ -1,5 +1,6 @@
 package com.chatroom.controllers;
 
+import com.chatroom.network.Client;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -15,14 +16,20 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Base64;
 
-public class MessageController {
+public class MessageController implements ClientAware {
     @FXML
     private Label messageBox;
     @FXML
     private Button profileButton;
 
     private String username;
-    
+    private Client c;
+
+    @Override
+    public void setClient(Client client) {
+        this.c = client;
+    }
+
     @FXML
     protected void openProfile(){
         try {
@@ -31,6 +38,7 @@ public class MessageController {
             Stage profileStage = loader.load();
             ProfileController controller = loader.getController();
             controller.setUsername(username);
+            controller.setClient(c);
             profileStage.show();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -82,4 +90,5 @@ public class MessageController {
         view.setPreserveRatio(true);
         profileButton.setGraphic(view);
     }
+
 }

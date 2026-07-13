@@ -281,12 +281,12 @@ public class ClientHandler implements Runnable {
         for(int userID : loggedInUsers) {
             // map of username --- picture
             Message msg = new Message();
-            message.setType(MessageType.PICTURE);
+            msg.setType(MessageType.PICTURE);
             Map<String, Object> payload = new HashMap<>();
             payload.put("username", profileService.getUsername(userID));
             payload.put("photo", profileService.getPhoto(userID));
             msg.setPayload(payload);
-            out.println(msg);
+            out.println(msg.serialize());
         }
     }
 }
