@@ -67,10 +67,9 @@ public class ProfileService {
             // save as bytes
             byte[] imageData = imageInFile.readAllBytes();
                 // add the saved stream to the bytes var
-            imageInFile.read(imageData);
                 // convert the bytes to a string
                 // return the base64 string
-            return Base64.getEncoder().encodeToString(imageData);
+            return Base64.getUrlEncoder().encodeToString(imageData);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

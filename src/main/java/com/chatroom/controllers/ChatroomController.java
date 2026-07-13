@@ -9,6 +9,7 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -63,15 +64,35 @@ public class ChatroomController implements ClientAware {
         this.imageCache = new HashMap<String, Image>();
         setTextArea();
         setClient(c);
-        // set listener first to avoid race conditions
-        // this only adds messages -- need to implement so it sends over users or have the client request it
-        client.setMessageListener(photoMessage -> {
-            System.out.println("Loading profile");
+        // one client listener
+        client.setMessageListener(raw -> {
+            // run on main fx thread
             Platform.runLater(() -> {
-                // add profiles pictures to users
-                addProfiles(photoMessage);
+                System.out.println("Loading profile");
+                String trimmed = raw.strip();
+                // if is a json or not
+                if(trimmed.startsWith("{")){
+                    try{
+                        Message parsed = Message.deserialize(trimmed);
+                        String type = parsed.getType();
+                        // handles pictures
+                        if ("PICTURE".equals(type)){
+                            addProfiles(trimmed);
+                            // handles chats
+                        } else if ("CHAT".equals(type)) {
+                            addMessage(parsed.getUsername() + ":" + parsed.getMessage());
+                        } else {
+                            System.out.println("Unhandled message type");
+                        }
+                    } catch (JsonProcessingException e) {
+                        throw new RuntimeException(e);
+                    }
+                } else {
+                    addMessage(trimmed);
+                }
             });
         });
+
 //        client.setMessageListener(message -> {
 //            System.out.println("Listener fired");
 //            Platform.runLater(() -> {
@@ -171,12 +192,15 @@ public class ChatroomController implements ClientAware {
             String username = profilePhoto.getBlank("username");
             String base64Image = profilePhoto.getBlank("photo");
             // convert base64 to image
-            if(!imageCache.containsKey("username")){
-                byte[] imageBytes = Base64.getDecoder().decode(base64Image);
-                Image profilePicture = new Image(new ByteArrayInputStream(imageBytes));
-
-                imageCache.put(username, profilePicture);
-                System.out.println(imageCache.get("username"));
+            if(!imageCache.containsKey(username)){
+                if(base64Image == null || base64Image.equals("no photo")){
+                    System.out.println("no photo for the user");
+                } else {
+                    byte[] imageBytes = Base64.getUrlDecoder().decode(base64Image);
+                    Image profilePicture = new Image(new ByteArrayInputStream(imageBytes));
+                    imageCache.put(username, profilePicture);
+                    System.out.println(imageCache.get(username));
+                }
             }
 
         } catch (JsonProcessingException e) {
@@ -185,14 +209,18 @@ public class ChatroomController implements ClientAware {
     }
 
     // opens a screen to set profile picture
-    @FXML
-    protected void openProfilePicture(){
+    public void openProfilePicture(){
         try {
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/com/chatroom/components/profile-picture.fxml"));
-            Stage profileStage = loader.load();
-            ProfileController controller = loader.getController();
+            AnchorPane root = loader.load();
+            ProfilePictureController controller = loader.getController();
             controller.setUsername(username);
+            controller.setClient(client);
+
+            Stage profileStage = new Stage();
+            profileStage.setScene(new Scene(root));
+            profileStage.setTitle("Profile Picture");
             profileStage.show();
         } catch (IOException e) {
             throw new RuntimeException(e);

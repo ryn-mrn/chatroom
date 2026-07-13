@@ -51,8 +51,8 @@ public class ProfilePictureController implements ClientAware {
         configureFileChooser(fileChooser);
         fileChooser.setTitle("Choose your picture");
         File file = fileChooser.showOpenDialog(stage);
-        Image image = new Image(file.getAbsolutePath());
         if(file != null){
+            Image image = new Image(file.toURI().toString());
             // save to the computer and send to the server
             sendFile(file);
             client.setOneTimeListener(response -> {
