@@ -3,6 +3,7 @@ package com.chatroom.controllers;
 import com.chatroom.models.Message;
 import com.chatroom.network.Client;
 
+import javafx.scene.image.Image;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -126,6 +127,11 @@ public class ProfileController implements ClientAware, Initializable {
 
     public void setUsername(String username){
         this.usernameLabel.setText(username);
+    }
+
+    public void setPicture(Image image){
+        profileImage.setImage(image);
+        profileImage.setPreserveRatio(true);
     }
 
 }

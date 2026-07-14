@@ -19,7 +19,7 @@ public class FriendsDAO {
         // may can only do with on of the OR
         String sql = """
                 SELECT status FROM friends
-                "WHERE (user1_id = ? AND user2_id = ?) OR (user1_id = ? AND user2_id = ?)""";
+                WHERE (user1_id = ? AND user2_id = ?) OR (user1_id = ? AND user2_id = ?)""";
         try (PreparedStatement stmt = conn.prepareStatement(sql)){
             stmt.setInt(1, client);
             stmt.setInt(2, profile);

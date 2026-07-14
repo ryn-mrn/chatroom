@@ -1,6 +1,7 @@
 package com.chatroom.controllers;
 
 import com.chatroom.network.Client;
+
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -11,12 +12,14 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Base64;
 
 public class MessageController implements ClientAware {
+
+    @FXML
+    private HBox messageContainer;
+    @FXML
+    private Label usernameLabel;
     @FXML
     private Label messageBox;
     @FXML
@@ -24,6 +27,7 @@ public class MessageController implements ClientAware {
 
     private String username;
     private Client c;
+    private Image profilePicture;
 
     @Override
     public void setClient(Client client) {
@@ -38,7 +42,8 @@ public class MessageController implements ClientAware {
             Stage profileStage = loader.load();
             ProfileController controller = loader.getController();
             controller.setUsername(username);
-            controller.setClient(c);
+            controller.initData(c);
+            controller.setPicture(profilePicture);
             profileStage.show();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -50,15 +55,17 @@ public class MessageController implements ClientAware {
     }
 
     public void setText(String username, String text, boolean isSender, boolean doubleMessage){
+        profileButton.setText(null);
         messageBox.setWrapText(true);
         setSize();
-        HBox root = (HBox) messageBox.getParent();
+        HBox root = messageContainer;
         if(isSender){
             root.setAlignment(Pos.CENTER_RIGHT);
             root.getChildren().remove(profileButton);
             messageBox.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;" +
                     "-fx-padding: 8; -fx-background-radius: 10;");
             messageBox.setText(text);
+            usernameLabel.setVisible(false);
         } else {
             if(doubleMessage){
                 // keeps spacing
@@ -68,6 +75,7 @@ public class MessageController implements ClientAware {
                     profileButton.setVisible(true);
             }
                 profileButton.setText(username);
+                usernameLabel.setText(username);
             }
             root.setAlignment(Pos.CENTER_LEFT);
             messageBox.setStyle("-fx-background-color: #e5e5ea; -fx-text-fill: black; " +
@@ -84,6 +92,7 @@ public class MessageController implements ClientAware {
 
     // sets the picture in the message
     public void setPicture(Image profilePicture){
+        this.profilePicture = profilePicture;
         ImageView view = new ImageView(profilePicture);
         view.setFitHeight(profileButton.getPrefHeight());
         view.setFitWidth(profileButton.getPrefWidth());

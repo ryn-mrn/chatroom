@@ -28,3 +28,11 @@
 #pictureButton:hover {
     -fx-cursor: hand;
 }
+
+#profileButton {
+    -fx-background-color: transparent;
+}
+
+#profileButton:hover {
+    -fx-cursor:hand
+}

@@ -62,6 +62,7 @@ public class ChatroomController implements ClientAware {
         this.usernameLabel.setText(username);
         this.messageArea.setWrapText(true);
         this.imageCache = new HashMap<String, Image>();
+        this.pictureButton.setText(null);
         setTextArea();
         setClient(c);
         // one client listener
