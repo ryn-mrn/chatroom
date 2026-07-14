@@ -241,6 +241,7 @@ public class ClientHandler implements Runnable {
         log.debug("Picture sent");
 
         Optional<Session> validated = authService.validateSession(message.getSessionID());
+        System.out.println(validated);
         if (validated.isEmpty()) {
             out.println("SESSION_EXPIRED");
             return;

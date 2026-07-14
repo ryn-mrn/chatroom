@@ -21,15 +21,15 @@ public class ProfilePictureDAO {
 
         try(PreparedStatement stmt = conn.prepareStatement(sql)){
             stmt.setInt(1, userID);
-            int rowsAffected = stmt.executeUpdate();
-            return rowsAffected > 0;
-        }catch(SQLException e){
+            ResultSet rs = stmt.executeQuery();
+            return rs.next();
+        } catch(SQLException e){
             throw new RuntimeException(e);
         }
     }
 
     public boolean addProfilePicture(int userID, String filepath){
-        String sql = "INSERT INTO profile_pictures (user, file_path) VALUES (?, ?)";
+        String sql = "INSERT INTO profile_pictures (user_id, file_path) VALUES (?, ?)";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)){
             stmt.setInt(1, userID);
@@ -43,7 +43,7 @@ public class ProfilePictureDAO {
     }
 
     public boolean changeProfilePicture(int userID, String filepath) {
-        String sql = "UPDATE profile_pictures SET filepath = ? WHERE user_id = ?";
+        String sql = "UPDATE profile_pictures SET file_path = ? WHERE user_id = ?";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, filepath);
@@ -67,7 +67,7 @@ public class ProfilePictureDAO {
         }
     }
 
-    public String getProfilePicturePath(int userID){
+    public String getProfilePictureFileName(int userID){
         String sql = "SELECT * FROM profile_pictures WHERE user_id = ?";
 
         // get the filepath then get the image to send to the user
@@ -86,5 +86,27 @@ public class ProfilePictureDAO {
         }
         return null;
     }
+
+    public String getProfilePicturePath(int userID){
+        String sql = "SELECT * FROM profile_pictures WHERE user_id = ?";
+
+        // get the filepath then get the image to send to the user
+        try (PreparedStatement stmt = conn.prepareStatement(sql)){
+            stmt.setInt(1, userID);
+            try (ResultSet rs = stmt.executeQuery()){
+                if(rs.next()){
+                    // got the file path
+                    String fileName = rs.getString("file_path");
+                    return "server-data/profile-pictures/" + fileName;
+                }
+            } catch (SQLException e){
+                throw new RuntimeException(e);
+            }
+        } catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
 
 }

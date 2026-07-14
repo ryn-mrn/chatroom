@@ -6,12 +6,16 @@ import server.dao.UserDAO;
 import java.io.*;
 import java.util.Base64;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 // may add changing names bios, etc, pictures for now
 
 public class ProfileService {
 
     private final ProfilePictureDAO profilePictureDAO = new ProfilePictureDAO();
     private final UserDAO userDAO = new UserDAO();
+    private final Logger log = LoggerFactory.getLogger(ProfileService.class);
 
     public boolean checkProfilePicture(int userID) {
         System.out.println("Checking if profile picture exists for: " + userID);
@@ -35,10 +39,24 @@ public class ProfileService {
 
     // save the photo
     public boolean savePhoto(String base64Image, String fileName) {
-        byte[] data = Base64.getDecoder().decode(base64Image);
+        byte[] data = Base64.getUrlDecoder().decode(base64Image);
         String path;
-        path = "server-data/pictures/" + fileName;
+        path = "server-data/profile-pictures/" + fileName;
         File file = new File(path);
+        File test = new File("server-data/profile-pictures/test.txt");
+        if(test.exists()){
+            log.info("test file exists -- directory working fine");
+        }
+        try {
+            FileOutputStream osf = new FileOutputStream(file);
+            osf.write(data);
+            osf.flush();
+            log.info("Writing data");
+            return true;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+/*
 
         try (OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file))) {
             outputStream.write(data);
@@ -46,7 +64,7 @@ public class ProfileService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return false;
+*/
     }
 
     public String getPhoto(int userID) {

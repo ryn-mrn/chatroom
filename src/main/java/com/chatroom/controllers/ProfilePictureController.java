@@ -6,6 +6,7 @@ import com.chatroom.network.Client;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
@@ -32,13 +33,17 @@ public class ProfilePictureController implements ClientAware {
     private Button openFileButton;
     @FXML
     private Button removePictureButton;
+    @FXML
+    private Label fileName;
 
     private Client client;
     private String username;
+    private String session;
 
     public void setUsername(String username){
         this.username = username;
     }
+    public void setSession(String sessionID) { this.session = sessionID; }
 
     @Override
     public void setClient(Client client){ this.client = client; }
@@ -60,6 +65,7 @@ public class ProfilePictureController implements ClientAware {
                     // when the server says ready then the photo is changed
                     if(response.equals("CHANGED_PHOTO")){
                         profilePicture.setImage(image);
+                        fileName.setText(file.getName());
                     }
                 });
             });
@@ -75,6 +81,7 @@ public class ProfilePictureController implements ClientAware {
         payload.put("username", username);
         payload.put("picture", "remove");
         message.setPayload(payload);
+        message.setToken(session);
         try {
             client.sendMessage(message.serialize());
             // get response
@@ -120,10 +127,13 @@ public class ProfilePictureController implements ClientAware {
         try {
             // convert the file to bytes
             byte[] imageData = Files.readAllBytes(file.getAbsoluteFile().toPath());
-            String base64image = Base64.getEncoder().encodeToString(imageData);
+            String base64image = Base64.getUrlEncoder().encodeToString(imageData);
             Map<String, Object> payload = new HashMap<>();
+            System.out.println(file.getName());
             Message message = new Message();
             message.setType("PICTURE");
+            // set token
+            message.setToken(session);
             payload.put("username", username);
             payload.put("picture", base64image);
             payload.put("filename", file.getName());

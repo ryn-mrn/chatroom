@@ -187,23 +187,31 @@ public class ChatroomController implements ClientAware {
         try {
             System.out.println(profile);
             Message profilePhoto = Message.deserialize(profile);
-            System.out.println(Message.deserialize(profile));
+            System.out.println(profilePhoto);
             // get the username and base64 photo
             String username = profilePhoto.getBlank("username");
             String base64Image = profilePhoto.getBlank("photo");
             // convert base64 to image
-            if(!imageCache.containsKey(username)){
-                if(base64Image == null || base64Image.equals("no photo")){
-                    System.out.println("no photo for the user");
-                } else {
-                    byte[] imageBytes = Base64.getUrlDecoder().decode(base64Image);
-                    Image profilePicture = new Image(new ByteArrayInputStream(imageBytes));
-                    imageCache.put(username, profilePicture);
-                    System.out.println(imageCache.get(username));
-                }
+            if(imageCache.containsKey(username)) {
+                return;
             }
 
-        } catch (JsonProcessingException e) {
+            if (base64Image == null || "no photo".equals(base64Image)) {
+                System.out.println("No photo for " + username);
+                return;
+            }
+
+            byte[] imageBytes = Base64.getUrlDecoder().decode(base64Image);
+            Image profilePicture = new Image(new ByteArrayInputStream(imageBytes));
+
+            imageCache.put(username, profilePicture);
+            if(username.equals(this.username)) {
+                this.profilePicture.setImage(profilePicture);
+            }
+
+            System.out.println(imageCache.get(username));
+        }
+        catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
     }
@@ -217,7 +225,7 @@ public class ChatroomController implements ClientAware {
             ProfilePictureController controller = loader.getController();
             controller.setUsername(username);
             controller.setClient(client);
-
+            controller.setSession(sessionID);
             Stage profileStage = new Stage();
             profileStage.setScene(new Scene(root));
             profileStage.setTitle("Profile Picture");
