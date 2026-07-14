@@ -96,8 +96,7 @@ public class ProfilePictureDAO {
             try (ResultSet rs = stmt.executeQuery()){
                 if(rs.next()){
                     // got the file path
-                    String fileName = rs.getString("file_path");
-                    return "server-data/profile-pictures/" + fileName;
+                    return rs.getString("file_path");
                 }
             } catch (SQLException e){
                 throw new RuntimeException(e);

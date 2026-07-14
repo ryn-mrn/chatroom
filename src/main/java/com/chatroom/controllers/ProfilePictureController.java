@@ -44,6 +44,7 @@ public class ProfilePictureController implements ClientAware {
         this.username = username;
     }
     public void setSession(String sessionID) { this.session = sessionID; }
+    public void setProfilePicture(Image picture) { this.profilePicture.setImage(picture) ;}
 
     @Override
     public void setClient(Client client){ this.client = client; }

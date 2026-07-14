@@ -221,9 +221,11 @@ public class ChatroomController implements ClientAware {
                     getClass().getResource("/com/chatroom/components/profile-picture.fxml"));
             AnchorPane root = loader.load();
             ProfilePictureController controller = loader.getController();
+            Image pfp = imageCache.get(username);
             controller.setUsername(username);
             controller.setClient(client);
             controller.setSession(sessionID);
+            controller.setProfilePicture(pfp);
             Stage profileStage = new Stage();
             profileStage.setScene(new Scene(root));
             profileStage.setTitle("Profile Picture");

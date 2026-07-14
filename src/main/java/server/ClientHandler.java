@@ -156,6 +156,9 @@ public class ClientHandler implements Runnable {
         // checks the register works properly and returns an error to the client
         // change to authService
         String reply = authService.handleRegister(registerUsername, registerPassword);
+        if(reply.equals("REGISTER_SUCCESS")){
+            profileService.newProfile(authService.getUserID(registerUsername));
+        }
         System.out.println(reply);
         // send the register message back to the user
         out.println(reply);
