@@ -267,7 +267,13 @@ public class ClientHandler implements Runnable {
         } else {
             System.out.println("Adding picture: " + profileService.addProfilePicture(userID, fileName));
         }
-        out.println("CHANGED_PHOTO");
+        Message msg = new Message();
+        msg.setType(MessageType.PICTURE);
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("username", username);
+        payload.put("photo", base64image);
+        msg.setPayload(payload);
+        out.println(msg);
         // handle the image to the database
         // add the file path, user id and date of creation to a profile picture table
         // save the photo to the data/profile-pictures

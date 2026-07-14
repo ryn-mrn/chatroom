@@ -98,7 +98,6 @@ public class ProfilePictureController implements ClientAware {
         }
     }
 
-
     // adds in a configuration so that only images are selected and the
     // directory starts at the user's home
     private static void configureFileChooser(

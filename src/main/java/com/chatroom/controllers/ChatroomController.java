@@ -71,12 +71,12 @@ public class ChatroomController implements ClientAware {
                 System.out.println("Loading profile");
                 String trimmed = raw.strip();
                 // if is a json or not
-                if(trimmed.startsWith("{")){
-                    try{
+                if(trimmed.startsWith("{")) {
+                    try {
                         Message parsed = Message.deserialize(trimmed);
                         String type = parsed.getType();
                         // handles pictures
-                        if ("PICTURE".equals(type)){
+                        if ("PICTURE".equals(type)) {
                             addProfiles(trimmed);
                             // handles chats
                         } else if ("CHAT".equals(type)) {
@@ -192,9 +192,6 @@ public class ChatroomController implements ClientAware {
             String username = profilePhoto.getBlank("username");
             String base64Image = profilePhoto.getBlank("photo");
             // convert base64 to image
-            if(imageCache.containsKey(username)) {
-                return;
-            }
 
             if (base64Image == null || "no photo".equals(base64Image)) {
                 System.out.println("No photo for " + username);

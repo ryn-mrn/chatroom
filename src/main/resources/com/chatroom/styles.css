@@ -20,3 +20,11 @@
 #messageArea .scroll-bar:vertical {
     -fx-opacity: 0;
 }
+
+#pictureButton {
+    -fx-background-color: transparent;
+}
+
+#pictureButton:hover {
+    -fx-cursor: hand;
+}

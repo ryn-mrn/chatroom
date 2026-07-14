@@ -43,10 +43,6 @@ public class ProfileService {
         String path;
         path = "server-data/profile-pictures/" + fileName;
         File file = new File(path);
-        File test = new File("server-data/profile-pictures/test.txt");
-        if(test.exists()){
-            log.info("test file exists -- directory working fine");
-        }
         try {
             FileOutputStream osf = new FileOutputStream(file);
             osf.write(data);
@@ -56,15 +52,6 @@ public class ProfileService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-/*
-
-        try (OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file))) {
-            outputStream.write(data);
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-*/
     }
 
     public String getPhoto(int userID) {
