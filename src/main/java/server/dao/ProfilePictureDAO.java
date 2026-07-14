@@ -44,9 +44,10 @@ public class ProfilePictureDAO {
 
     public boolean changeProfilePicture(int userID, String filepath) {
         String sql = "UPDATE profile_pictures SET file_path = ? WHERE user_id = ?";
+        String fullPath = "server-data/profile-pictures/" + filepath;
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, filepath);
+            stmt.setString(1, fullPath);
             stmt.setInt(2, userID);
             int rowsAffected = stmt.executeUpdate();
             return rowsAffected > 0;

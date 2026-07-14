@@ -57,15 +57,18 @@ public class ProfileService {
     public String getPhoto(int userID) {
         String filePath = profilePictureDAO.getProfilePicturePath(userID);
 
+        // for new users
         if (filePath == null || filePath.isBlank()) {
             newProfile(userID);
             return "no photo";
         }
 
         File imageFile = new File(filePath);
+
+        // for broken files
         if(!imageFile.exists()) {
-            newProfile(userID);
             System.out.println("Missing photo: " + filePath);
+            profileFix(userID);
             return "no photo";
         }
         try (FileInputStream imageInFile = new FileInputStream(imageFile)){
@@ -88,5 +91,10 @@ public class ProfileService {
     public void newProfile(int userID){
         String fileName = "default_pfp.jpg";
         profilePictureDAO.addProfilePicture(userID, fileName);
+    }
+
+    public void profileFix(int userID){
+        String fileName = "default_pfp.jpg";
+        profilePictureDAO.changeProfilePicture(userID, fileName);
     }
 }
