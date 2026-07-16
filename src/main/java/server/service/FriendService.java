@@ -29,4 +29,8 @@ public class FriendService {
         System.out.println("Removing friend " + userDAO.getUsername(client));
         return friendsDAO.removeUser(client);
     }
+
+    public int checkPending(int client){
+        return friendsDAO.checkPending(client);
+    }
 }

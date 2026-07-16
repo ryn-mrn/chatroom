@@ -32,10 +32,9 @@
             </ScrollPane>
          </children>
       </AnchorPane>
-      <Button fx:id="inboxButton"
-              layoutX="559.0" layoutY="139.0"
-              mnemonicParsing="false"
-              onAction="#handleInbox"
-              prefHeight="76.0" prefWidth="77.0" text="INBOX" />
+      <Button fx:id="inboxButton" layoutX="559.0" layoutY="139.0" mnemonicParsing="false" onAction="#handleInbox" prefHeight="76.0" prefWidth="77.0" text="INBOX" />
+      <Label fx:id="notificationsLabel"
+             layoutX="645.0" layoutY="139.0"
+             prefHeight="17.0" prefWidth="115.0" text="Notifications:" />
    </children>
 </AnchorPane>

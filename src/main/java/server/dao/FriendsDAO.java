@@ -82,4 +82,24 @@ public class FriendsDAO {
             throw new RuntimeException(e);
         }
     }
+
+    // returns the amount of pending requests
+    public int checkPending(int client){
+        String sql = """
+                SELECT COUNT(*) FROM friends
+                WHERE (user1_id = ? OR user2_id = ?)
+                AND status ='pending'
+                """;
+        try (PreparedStatement stmt = conn.prepareStatement(sql)){
+            stmt.setInt(1, client);
+            stmt.setInt(2, client);
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next()){
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return 0;
+    }
 }

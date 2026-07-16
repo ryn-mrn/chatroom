@@ -12,5 +12,6 @@ public enum MessageType{
     BLOCK,
     REMOVE,
     PICTURE,
-    PROFILE_REQUEST
+    PROFILE_REQUEST,
+    INBOX
 }

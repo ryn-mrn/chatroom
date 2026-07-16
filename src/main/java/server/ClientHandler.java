@@ -121,7 +121,8 @@ public class ClientHandler implements Runnable {
             case BLOCK -> handleBlock(message, out);
             case REMOVE -> handleRemove(message, out);
             case PICTURE -> handlePicture(message, out);
-            case PROFILE_REQUEST -> handleProfileRequest(message, out);
+            case PROFILE_REQUEST -> handleProfileRequest(out);
+            case INBOX -> handleInbox(out);
         }
     }
 
@@ -284,7 +285,7 @@ public class ClientHandler implements Runnable {
 
 
     // get the current users in the session and send only those profile pictures
-    private void handleProfileRequest(Message message, PrintWriter out){
+    private void handleProfileRequest(PrintWriter out){
         // get clients and their ids and send a message with their avatar
         ArrayList<Integer> loggedInUsers = authService.getLoggedInUsers();
         // get list of the profiles
@@ -298,5 +299,19 @@ public class ClientHandler implements Runnable {
             msg.setPayload(payload);
             out.println(msg.serialize());
         }
+    }
+
+    private void handleInbox(PrintWriter out){
+        // check for pending requests and check for messages -- DMs to be added
+        int pendingRequests = friendService.checkPending(authService.getUserID(clientUsername));
+        int unreadMessages = 0;
+        Message msg = new Message();
+        msg.setType(MessageType.INBOX);
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("requests", pendingRequests);
+        payload.put("messages", unreadMessages);
+        payload.put("message",  pendingRequests+unreadMessages);
+        msg.setPayload(payload);
+        out.println(msg.serialize());
     }
 }

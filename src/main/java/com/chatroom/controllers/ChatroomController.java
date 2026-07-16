@@ -27,6 +27,9 @@ import java.util.function.UnaryOperator;
 
 public class ChatroomController implements ClientAware {
 
+
+    @FXML
+    private Label notificationsLabel;
     @FXML
     private Button inboxButton;
     @FXML
@@ -79,13 +82,15 @@ public class ChatroomController implements ClientAware {
                         Message parsed = Message.deserialize(trimmed);
                         String type = parsed.getType();
                         // handles pictures
-                        if ("PICTURE".equals(type)) {
-                            addProfiles(trimmed);
+                        switch (type) {
+                            case "PICTURE" -> addProfiles(trimmed);
+
                             // handles chats
-                        } else if ("CHAT".equals(type)) {
-                            addMessage(parsed.getUsername() + ":" + parsed.getMessage());
-                        } else {
-                            System.out.println("Unhandled message type");
+                            case "CHAT" -> addMessage(parsed.getUsername() + ":" + parsed.getMessage());
+
+                            // if inbox is the message then show the notifications on the inbox button
+                            case "INBOX" -> addInbox(parsed.getMessage());
+                            case null, default -> System.out.println("Unhandled message type");
                         }
                     } catch (JsonProcessingException e) {
                         throw new RuntimeException(e);
@@ -95,14 +100,6 @@ public class ChatroomController implements ClientAware {
                 }
             });
         });
-
-//        client.setMessageListener(message -> {
-//            System.out.println("Listener fired");
-//            Platform.runLater(() -> {
-//                // checking if the sender is sending messages so they get rid of the profile picture -- multiple messages
-//                addMessage(message);
-//            });
-//        });
         // gets the username for printing message properly
         System.out.println(this.username);
         // request profiles of users
@@ -115,6 +112,10 @@ public class ChatroomController implements ClientAware {
         chatroomMessage.setType("CHATROOM");
         chatroomMessage.setToken(sessionID);
         client.sendMessage(chatroomMessage.serialize());
+        Message inboxMessage = new Message();
+        inboxMessage.setType("INBOX");
+        inboxMessage.setToken(sessionID);
+        client.sendMessage(inboxMessage.serialize());
     }
 
     public void setTextArea(){
@@ -237,6 +238,10 @@ public class ChatroomController implements ClientAware {
         }
     }
 
+    // gets the data and adds to the inbox to show notifications
+    public void addInbox(String notifications){ // expecting a message with number of notifications
+        notificationsLabel.setText("Notifications: " + notifications);
+    }
 
     // this is for handling opening the inbox screen
     public void handleInbox(){

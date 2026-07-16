@@ -34,5 +34,9 @@
 }
 
 #profileButton:hover {
-    -fx-cursor:hand
+    -fx-cursor:hand;
+}
+
+#notificationsLabel {
+    -fx-background-color:grey;
 }

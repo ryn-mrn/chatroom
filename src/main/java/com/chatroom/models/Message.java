@@ -92,6 +92,7 @@ public class Message {
     }
 
     public String getMessage(){
+        if (payload == null) return null;
         return (String) getPayload().get("message");
     }
 }
