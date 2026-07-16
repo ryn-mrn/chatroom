@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<AnchorPane prefHeight="79.0" prefWidth="297.0"
+            xmlns="http://javafx.com/javafx/17.0.12"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.chatroom.controllers.InboxController">
+   <children>
+      <Button fx:id="messagesButton"
+              layoutX="32.0" layoutY="28.0"
+              onAction="#handleMessages"
+              mnemonicParsing="false" text="Messages" />
+      <Button fx:id="friendsButton"
+              layoutX="117.0" layoutY="28.0"
+              onAction="#handleFriends"
+              mnemonicParsing="false" prefHeight="25.0"
+              prefWidth="68.0" text="Friends" />
+      <Button fx:id="requestsButton" layoutX="199.0" layoutY="28.0"
+              onAction="#handleRequests"
+              mnemonicParsing="false" prefHeight="25.0"
+              prefWidth="68.0" text="Requests" />
+      <Label fx:id="messagesLabel"
+             layoutX="52.0" layoutY="57.0" text="msg" />
+      <Label fx:id="friendsLabel"
+             layoutX="137.0" layoutY="57.0" text="friend" />
+      <Label fx:id="requestsLabel"
+             layoutX="219.0" layoutY="57.0" text="req" />
+   </children>
+</AnchorPane>

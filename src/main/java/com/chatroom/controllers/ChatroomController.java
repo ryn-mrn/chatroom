@@ -28,6 +28,8 @@ import java.util.function.UnaryOperator;
 public class ChatroomController implements ClientAware {
 
     @FXML
+    private Button inboxButton;
+    @FXML
     private AnchorPane messageBox;
     @FXML
     private ImageView profilePicture;
@@ -234,4 +236,23 @@ public class ChatroomController implements ClientAware {
             throw new RuntimeException(e);
         }
     }
+
+
+    // this is for handling opening the inbox screen
+    public void handleInbox(){
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/com/chatroom/components/inbox.fxml"));
+            AnchorPane root = loader.load();
+            InboxController controller = loader.getController();
+            controller.setClient(client);
+            Stage inboxStage = new Stage();
+            inboxStage.setScene(new Scene(root));
+            inboxStage.setTitle("Inbox");
+            inboxStage.show();
+        } catch (IOException e){
+            throw new RuntimeException(e);
+        }
+    }
+
 }
