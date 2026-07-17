@@ -16,10 +16,11 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -54,6 +55,7 @@ public class ChatroomController implements ClientAware {
     private String sessionID;
     private String sender = null;
     private Map<String, Image> imageCache;
+    private final Logger log = LoggerFactory.getLogger(ChatroomController.class);
 
 
     @Override
@@ -78,17 +80,14 @@ public class ChatroomController implements ClientAware {
                 String trimmed = raw.strip();
                 // if is a json or not
                 if(trimmed.startsWith("{")) {
+                    // implement a handshake
                     try {
                         Message parsed = Message.deserialize(trimmed);
                         String type = parsed.getType();
                         // handles pictures
                         switch (type) {
                             case "PICTURE" -> addProfiles(trimmed);
-
-                            // handles chats
                             case "CHAT" -> addMessage(parsed.getUsername() + ":" + parsed.getMessage());
-
-                            // if inbox is the message then show the notifications on the inbox button
                             case "INBOX" -> addInbox(parsed.getMessage());
                             case null, default -> System.out.println("Unhandled message type");
                         }

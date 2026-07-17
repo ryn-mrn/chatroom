@@ -58,6 +58,19 @@ public class DatabaseConnection {
         // so that when a new user joins these recent messages can be loaded in so the user can
         // join the conversation
 
+        // create a table for direct messages
+
+        String directMessagesTable = """
+                CREATE TABLE IF NOT EXISTS direct_messages (
+                    user1_id INTEGER NOT NULL,
+                    user2_id INTEGER NOT NULL,
+                    message TEXT,
+                    status TEXT,
+                    sent_at TEXT NOT NULL DEFAULT (datetime('now')),
+                    FOREIGN KEY (user1_id) REFERENCES users(id),
+                    FOREIGN KEY (user2_id) REFERENCES users(id)
+                )
+                """;
         // create profile picture table
         String profilePictureTable = """
                CREATE TABLE IF NOT EXISTS profile_pictures (
@@ -92,6 +105,8 @@ public class DatabaseConnection {
         try (Statement stmt = conn.createStatement()) {
             stmt.execute(usersTable);
             System.out.println("Users table initialized.");
+            stmt.execute(directMessagesTable);
+            System.out.println("Direct messages table initialized");
             stmt.execute(profilePictureTable);
             System.out.println("Profile picture table initialized.");
             stmt.execute(messagesTable);

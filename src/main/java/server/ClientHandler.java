@@ -301,6 +301,7 @@ public class ClientHandler implements Runnable {
         }
     }
 
+
     private void handleInbox(PrintWriter out){
         // check for pending requests and check for messages -- DMs to be added
         int pendingRequests = friendService.checkPending(authService.getUserID(clientUsername));

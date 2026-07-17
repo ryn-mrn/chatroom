@@ -13,5 +13,6 @@ public enum MessageType{
     REMOVE,
     PICTURE,
     PROFILE_REQUEST,
-    INBOX
+    INBOX,
+    PROFILE_RESPONSE
 }
