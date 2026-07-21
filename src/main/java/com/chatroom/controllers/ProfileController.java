@@ -64,6 +64,8 @@ public class ProfileController implements ClientAware, Initializable {
                             case "PENDING":
                                 addButton.setText("Pending");
                                 break;
+                            case "ACCEPT":
+                                addButton.setText("Accept");
                             case "BLOCKED_CLIENT":
                                 addButton.setVisible(false);
                                 removeButton.setVisible(false);

@@ -89,6 +89,7 @@ public class ChatroomController implements ClientAware {
                             case "PICTURE" -> addProfiles(trimmed);
                             case "CHAT" -> addMessage(parsed.getUsername() + ":" + parsed.getMessage());
                             case "INBOX" -> addInbox(parsed.getMessage());
+                            case "ADD" -> handleAdd(parsed.getPayload());
                             case null, default -> System.out.println("Unhandled message type");
                         }
                     } catch (JsonProcessingException e) {
@@ -257,6 +258,15 @@ public class ChatroomController implements ClientAware {
         } catch (IOException e){
             throw new RuntimeException(e);
         }
+    }
+
+    public void handleAdd(Map<String, Object> payload){
+        String username = (String) payload.get("from");
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Friend Request");
+        alert.setHeaderText("You have received a friend request");
+        alert.setContentText("From: " + username);
+        alert.showAndWait();
     }
 
 }
