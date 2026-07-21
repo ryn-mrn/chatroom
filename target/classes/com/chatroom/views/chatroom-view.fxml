@@ -4,38 +4,47 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="600.0" prefWidth="800.0" stylesheets="@../styles.css"
-            xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.chatroom.controllers.ChatroomController">
-   <children>
-      <ImageView fitHeight="600.0" fitWidth="800.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../../../images/background_image.jpg" />
-         </image>
-      </ImageView>
-      <TextArea fx:id="messageArea" layoutX="24.0" layoutY="514.0" prefHeight="51.0" prefWidth="374.0" promptText="Type your message..." />
-      <Button fx:id="enterButton" layoutX="412.0" layoutY="514.0" mnemonicParsing="false" onAction="#sendMessage" prefHeight="51.0" prefWidth="77.0" text="Enter" />
-      <AnchorPane layoutX="559.0" layoutY="28.0" prefHeight="76.0" prefWidth="200.0">
-         <children>
-            <Label fx:id="usernameLabel" prefHeight="76.0" prefWidth="200.0" stylesheets="@../styles.css" text="Username" />
-            <Button fx:id="pictureButton" layoutX="87.0" layoutY="13.0"
-                    mnemonicParsing="false" onAction="#openProfilePicture"
-                    prefHeight="51.0" prefWidth="51.0" text="Profile">
-                    <graphic>
-                       <ImageView fx:id="profilePicture" fitHeight="51.0" fitWidth="51.0" layoutX="87.0" layoutY="11.0" pickOnBounds="true" preserveRatio="true" />
-                    </graphic>
-            </Button>
-
-         </children>
-      </AnchorPane>
-      <AnchorPane fx:id="messageBox" layoutX="24.0" layoutY="28.0" prefHeight="456.0" prefWidth="517.0">
-         <children>
-            <ScrollPane fx:id="messageScroll" hbarPolicy="NEVER" prefHeight="456.0" prefWidth="517.0">
-               <content>
-                  <VBox fx:id="chatBox" prefWidth="495.0" />
-               </content>
-            </ScrollPane>
-         </children>
-      </AnchorPane>
-   </children>
+<AnchorPane prefHeight="600.0" prefWidth="800.0" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/17.0.12"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.chatroom.controllers.ChatroomController">
+   <ImageView fitHeight="600.0" fitWidth="800.0" pickOnBounds="true" preserveRatio="true">
+      <Image url="@../../../images/background_image.jpg"/>
+   </ImageView>
+   <TextArea fx:id="messageArea"
+             layoutX="24.0" layoutY="514.0"
+             prefHeight="51.0" prefWidth="374.0"
+             promptText="Type your message..."/>
+   <Button fx:id="enterButton"
+           layoutX="412.0" layoutY="514.0"
+           mnemonicParsing="false"
+           onAction="#sendMessage"
+           prefHeight="51.0" prefWidth="77.0" text="Enter"/>
+   <AnchorPane layoutX="559.0" layoutY="28.0" prefHeight="76.0" prefWidth="200.0">
+      <Label fx:id="usernameLabel"
+             prefHeight="76.0" prefWidth="200.0"
+             stylesheets="@../styles.css" text="Username"/>
+      <Button fx:id="pictureButton"
+              layoutX="87.0" layoutY="13.0"
+              mnemonicParsing="false"
+              onAction="#openProfilePicture"
+              prefHeight="51.0" prefWidth="51.0" text="Profile">
+         <graphic>
+            <ImageView fx:id="profilePicture"
+                       fitHeight="51.0" fitWidth="51.0"
+                       layoutX="87.0" layoutY="11.0"
+                       pickOnBounds="true" preserveRatio="true"/>
+         </graphic>
+      </Button>
+   </AnchorPane>
+   <AnchorPane fx:id="messageBox" layoutX="24.0" layoutY="28.0" prefHeight="456.0" prefWidth="517.0">
+      <ScrollPane fx:id="messageScroll" hbarPolicy="NEVER" prefHeight="456.0" prefWidth="517.0">
+         <VBox fx:id="chatBox" prefWidth="495.0"/>
+      </ScrollPane>
+   </AnchorPane>
+   <Button fx:id="inboxButton"
+           layoutX="559.0" layoutY="139.0"
+           mnemonicParsing="false"
+           onAction="#handleInbox" prefHeight="76.0" prefWidth="77.0" text="INBOX"/>
+   <Label fx:id="notificationsLabel"
+          layoutX="645.0" layoutY="139.0"
+          prefHeight="17.0" prefWidth="115.0" text="Notifications:"/>
 </AnchorPane>

@@ -7,10 +7,7 @@ import server.models.FriendStatus;
 import server.models.Message;
 import server.models.MessageType;
 import server.models.Session;
-import server.service.AuthService;
-import server.service.FriendService;
-import server.service.MessageService;
-import server.service.ProfileService;
+import server.service.*;
 
 import java.io.*;
 import java.net.Socket;
@@ -22,12 +19,15 @@ public class ClientHandler implements Runnable {
     private static final Logger log = LoggerFactory.getLogger(ClientHandler.class);
     private final Socket clientSocket;
     private final List<PrintWriter> clients;
+    private final Map<Integer, PrintWriter> onlineUsers;
     private final AuthService authService;
     private final FriendService friendService;
     private final MessageService messageService;
     private final ProfileService profileService;
+    private final InboxService inboxService;
     private String clientUsername = "";
     private Session session;
+    private int clientID = -1;
     private record FriendContext(int clientID, int profileID, FriendStatus status) {}
 
     private FriendContext getFriendContext(Message message){
@@ -38,16 +38,20 @@ public class ClientHandler implements Runnable {
     }
 
     public ClientHandler(Socket socket, List<PrintWriter> clients,
+                         Map<Integer, PrintWriter> onlineUsers,
                          AuthService authService,
                          FriendService friendService,
                          MessageService messageService,
-                         ProfileService profileService) {
+                         ProfileService profileService,
+                         InboxService inboxService) {
         this.clientSocket = socket;
         this.clients = clients;
+        this.onlineUsers = onlineUsers;
         this.authService = authService;
         this.friendService = friendService;
         this.messageService = messageService;
         this.profileService = profileService;
+        this.inboxService = inboxService;
     }
 
     @Override
@@ -85,6 +89,7 @@ public class ClientHandler implements Runnable {
             try {
                 if (out != null) {
                     clients.remove(out);
+                    if (clientID != -1) onlineUsers.remove(clientID);
                     out.close();
                 }
                 if (in != null) {
@@ -142,11 +147,18 @@ public class ClientHandler implements Runnable {
             // send login reply and session id to the user
             // e.g "LOGIN_SUCCESS ioef89s7f98dsf90sfds90f", all sent as one
             System.out.println(session.getSessionID());
+            onlineUsers.put(authService.getUserID(username), out);
             out.println(loginReply + " " + session.getSessionID());
         }
         else {
             out.println(loginReply);
         }
+    }
+
+    private void handleLogout(Message message, PrintWriter out){
+        authService.invalidateSession(message.getSessionID());
+        if (clientID != -1) onlineUsers.remove(clientID);
+        out.println("LOGOUT_SUCCESS");
     }
 
     private void handleRegister(Message message, PrintWriter out){
@@ -163,11 +175,6 @@ public class ClientHandler implements Runnable {
         System.out.println(reply);
         // send the register message back to the user
         out.println(reply);
-    }
-
-    private void handleLogout(Message message, PrintWriter out){
-        authService.invalidateSession(message.getSessionID());
-        out.println("LOGOUT_SUCCESS");
     }
 
     private void handleChatroom(PrintWriter out){
@@ -211,9 +218,21 @@ public class ClientHandler implements Runnable {
     private void handleAdd(Message message, PrintWriter out){
         log.debug("Add pressed");
         FriendContext ctx = getFriendContext(message);
-        if(ctx.status == FriendStatus.NO_INTERACTION){
+        if(ctx.status == FriendStatus.NO_INTERACTION) {
             log.info("Friend request {}", friendService.addFriend(ctx.clientID(), ctx.profileID()));
             out.println("PENDING");
+
+
+            // get the user's socket to send the message
+            PrintWriter targetOut = onlineUsers.get(ctx.profileID());
+            if (targetOut != null) {
+                Message notify = new Message();
+                notify.setType(MessageType.ADD); // or a dedicated FRIEND_REQUEST type
+                Map<String, Object> payload = new HashMap<>();
+                payload.put("from", clientUsername);
+                notify.setPayload(payload);
+                targetOut.println(notify.serialize());
+            }
         }
     }
 
@@ -301,17 +320,17 @@ public class ClientHandler implements Runnable {
         }
     }
 
-
     private void handleInbox(PrintWriter out){
         // check for pending requests and check for messages -- DMs to be added
-        int pendingRequests = friendService.checkPending(authService.getUserID(clientUsername));
-        int unreadMessages = 0;
+        int friendRequests = inboxService.getFriendRequests(authService.getUserID(clientUsername));
+        int unreadMessages = inboxService.getUnreadMessages(authService.getUserID(clientUsername));
+        int notifications = inboxService.getNotifications(authService.getUserID(clientUsername));
         Message msg = new Message();
         msg.setType(MessageType.INBOX);
         Map<String, Object> payload = new HashMap<>();
-        payload.put("requests", pendingRequests);
-        payload.put("messages", unreadMessages);
-        payload.put("message",  pendingRequests+unreadMessages);
+        payload.put("requests", friendRequests);
+        payload.put("unread", unreadMessages);
+        payload.put("notifications", notifications);
         msg.setPayload(payload);
         out.println(msg.serialize());
     }

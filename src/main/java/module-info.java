@@ -1,6 +1,7 @@
 module com.chatroom {
     requires javafx.controls;
     requires javafx.fxml;
+    requires javafx.graphics;
 
     requires org.kordamp.bootstrapfx.core;
     requires org.slf4j;
@@ -10,7 +11,8 @@ module com.chatroom {
     requires java.sql;
     requires java.desktop;
 
-    opens com.chatroom to javafx.fxml;
+    exports com.chatroom;
+    opens com.chatroom to javafx.fxml, javafx.graphics;
     opens com.chatroom.controllers to javafx.fxml;
     opens server.models to com.fasterxml.jackson.databind;
     opens com.chatroom.models to com.fasterxml.jackson.databind;

@@ -68,11 +68,10 @@ public class DirectMessageDAO {
         }
     }
 
-
     // counts the number of unread messages
     public int getNumberOfUnreadMessages(int client){
-        String sql = "SELECT COUNT(*) FROM direct_messages" +
-                "WHERE user1_id = ? AND status ='unread";
+        String sql = "SELECT COUNT(*) FROM direct_messages " +
+                "WHERE user1_id = ? AND status = 'unread'";
 
         try(PreparedStatement stmt = conn.prepareStatement(sql)){
             stmt.setInt(1, client);
