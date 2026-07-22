@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 
 <AnchorPane prefHeight="600.0" prefWidth="800.0" stylesheets="@../styles.css" xmlns="http://javafx.com/javafx/17.0.12"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.chatroom.controllers.ChatroomController">
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.chatroom.client.controllers.ChatroomController">
    <ImageView fitHeight="600.0" fitWidth="800.0" pickOnBounds="true" preserveRatio="true">
       <Image url="@../../../images/background_image.jpg"/>
    </ImageView>

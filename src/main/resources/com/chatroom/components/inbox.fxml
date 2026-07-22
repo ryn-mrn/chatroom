@@ -6,7 +6,7 @@
 
 <AnchorPane prefHeight="79.0" prefWidth="297.0"
             xmlns="http://javafx.com/javafx/17.0.12"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.chatroom.controllers.InboxController">
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.chatroom.client.controllers.InboxController">
    <children>
       <Button fx:id="messagesButton"
               layoutX="32.0" layoutY="28.0"

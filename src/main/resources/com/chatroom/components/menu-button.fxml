@@ -3,7 +3,7 @@
 
 <Button
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.chatroom.controllers.MenuController"
+            fx:controller="com.chatroom.client.controllers.MenuController"
             prefHeight="31.0" prefWidth="56.0"
             text="Back"
             onAction="#menuScene"

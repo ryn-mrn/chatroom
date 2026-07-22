@@ -4,7 +4,7 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane fx:id="ap" prefHeight="211.0" prefWidth="227.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.chatroom.controllers.ProfilePictureController">
+<AnchorPane fx:id="ap" prefHeight="211.0" prefWidth="227.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.chatroom.client.controllers.ProfilePictureController">
    <children>
       <Button fx:id="openFileButton" layoutY="2.0"
               mnemonicParsing="false" onAction="#addFile" text="Open file" />

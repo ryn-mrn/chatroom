@@ -10,7 +10,7 @@
             stylesheets="@../styles.css"
             xmlns="http://javafx.com/javafx/17.0.12"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.chatroom.controllers.LoginController">
+            fx:controller="com.chatroom.client.controllers.LoginController">
    <fx:include source="../components/menu-button.fxml"/>
    <children>
       <ImageView fitHeight="615.0" fitWidth="800.0" pickOnBounds="true" preserveRatio="true">

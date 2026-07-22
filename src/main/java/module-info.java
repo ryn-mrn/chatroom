@@ -11,9 +11,10 @@ module com.chatroom {
     requires java.sql;
     requires java.desktop;
 
-    exports com.chatroom;
     opens com.chatroom to javafx.fxml, javafx.graphics;
-    opens com.chatroom.controllers to javafx.fxml;
-    opens server.models to com.fasterxml.jackson.databind;
-    opens com.chatroom.models to com.fasterxml.jackson.databind;
+    opens com.chatroom.client.controllers to javafx.fxml;
+    opens com.chatroom.server.models to com.fasterxml.jackson.databind;
+    opens com.chatroom.client.models to com.fasterxml.jackson.databind;
+    exports com.chatroom.client;
+    opens com.chatroom.client to javafx.fxml, javafx.graphics;
 }

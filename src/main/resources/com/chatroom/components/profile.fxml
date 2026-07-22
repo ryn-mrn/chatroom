@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.stage.Stage?>
 
-<Stage xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.chatroom.controllers.ProfileController">
+<Stage xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.chatroom.client.controllers.ProfileController">
     <scene>
         <Scene>
             <AnchorPane prefHeight="200" prefWidth="200">
