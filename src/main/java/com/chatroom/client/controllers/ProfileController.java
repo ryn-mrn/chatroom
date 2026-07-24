@@ -4,6 +4,7 @@ import com.chatroom.client.network.Client;
 
 import com.chatroom.common.*;
 
+import javafx.event.ActionEvent;
 import javafx.scene.image.Image;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +20,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class ProfileController implements ClientAware, Initializable {
@@ -60,16 +62,14 @@ public class ProfileController implements ClientAware, Initializable {
                         // Deserialize the message -- maybe make a FriendStatusMessage
                         Message msg = Message.deserialize(response);
                         // These are strings as they are friend contexts
-                        switch(response){
+                        switch(Objects.requireNonNull(msg).getBlank("status")){
                             case "ADDED":
                                 addButton.setVisible(false);
                                 messageButton.setVisible(true);
                                 break;
                             case "PENDING":
-                                addButton.setText("Pending");
+                                configurePending(msg);
                                 break;
-                            case "ACCEPT":
-                                addButton.setText("Accept");
                             case "BLOCKED":
                                 addButton.setVisible(false);
                                 removeButton.setVisible(false);
@@ -93,7 +93,7 @@ public class ProfileController implements ClientAware, Initializable {
         payload.put("username", usernameLabel.getText());
         message.setPayload(payload);
         try{
-            System.out.println("ADDING " + usernameLabel.getText() + client.sendMessage(message.serialize()));
+            client.sendMessage(message.serialize());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -106,7 +106,7 @@ public class ProfileController implements ClientAware, Initializable {
         payload.put("username", usernameLabel.getText());
         message.setPayload(payload);
         try{
-            System.out.println("BLOCKING " + usernameLabel.getText() + client.sendMessage(message.serialize()));
+            client.sendMessage(message.serialize());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -131,6 +131,20 @@ public class ProfileController implements ClientAware, Initializable {
         }
     }
 
+    // The add button's action is changed to this if the pending requests is ingoing
+    private void accept(ActionEvent event){
+        Map<String, Object> payload = new HashMap<>();
+        Message message = new Message();
+        message.setType(MessageType.ACCEPT);
+        payload.put("username", usernameLabel.getText());
+        message.setPayload(payload);
+        try{
+            client.sendMessage(message.serialize());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void setUsername(String username){
         this.usernameLabel.setText(username);
     }
@@ -140,4 +154,15 @@ public class ProfileController implements ClientAware, Initializable {
         profileImage.setPreserveRatio(true);
     }
 
+    // Changes the add button depending on if the pending is ingoing or outgoing
+    public void configurePending(Message msg){
+        String io = msg.getBlank("io");
+        if(io.equals("ingoing")){
+            addButton.setText("Accept");
+            addButton.setOnAction(this::accept);
+        } else {
+            addButton.setText("Pending");
+            addButton.setDisable(true);
+        }
+    }
 }

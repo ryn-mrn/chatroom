@@ -2,7 +2,7 @@ package com.chatroom.server.dao;
 
 import com.chatroom.server.database.DatabaseConnection;
 
-import com.chatroom.server.models.FriendStatus;
+import com.chatroom.common.*;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -43,7 +43,7 @@ public class FriendsDAO {
 
     // for adding users
     public boolean addUser(int client, int profile){
-        String sql = "INSERT INTO friends VALUES(?, ?, 'pending')";
+        String sql = "INSERT INTO friends VALUES(?, ?, 'PENDING')";
         try (PreparedStatement stmt = conn.prepareStatement(sql)){;
             stmt.setInt(1, client);
             stmt.setInt(2, profile);
@@ -60,7 +60,7 @@ public class FriendsDAO {
     public boolean acceptUser(int client, int profile){
         String sql = """
                 UPDATE friends
-                SET status ='added'
+                SET status ='ADDED'
                 WHERE user1_id = ? AND user2_id = ?
                 """;
         try(PreparedStatement stmt = conn.prepareStatement(sql)){
@@ -90,7 +90,7 @@ public class FriendsDAO {
     // for blocking users
     // checks if the user is added, if they are, remove them then block them
     public boolean blockUser(int client, int profile){
-        String sql = "INSERT INTO friends VALUES(?, ?, 'blocked')";
+        String sql = "INSERT INTO friends VALUES(?, ?, 'BLOCKED')";
         if(checkStatus(client, profile).equals(FriendStatus.ADDED)){
             removeUser(client);
         }
@@ -109,7 +109,7 @@ public class FriendsDAO {
         String sql = """
                 SELECT COUNT(*) FROM friends
                 WHERE (user1_id = ? OR user2_id = ?)
-                AND status ='pending'
+                AND status ='PENDING'
                 """;
         try (PreparedStatement stmt = conn.prepareStatement(sql)){
             stmt.setInt(1, client);
@@ -124,12 +124,48 @@ public class FriendsDAO {
         return 0;
     }
 
+
+    // these two functions will be used to determine whether the ProfileController will have
+    // "accept" or "pending" on the add button
+    // 1.
+    public boolean checkIngoingFromOneUser(int client, int profile){
+        String sql = """
+                SELECT * FROM friends
+                WHERE (user1_id = ? AND user2_id = ?)
+                AND status = 'PENDING'
+                """;
+        try(PreparedStatement stmt = conn.prepareStatement(sql)){
+            stmt.setInt(1, profile);
+            stmt.setInt(2, client);
+            ResultSet rs = stmt.executeQuery();
+            return rs.next();
+        } catch (RuntimeException | SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    // 2.
+    public boolean checkOutgoingToOneUser(int client, int profile){
+        String sql = """
+                SELECT * FROM friends
+                WHERE (user1_id = ? AND user2_id = ?)
+                AND status = 'PENDING'
+                """;
+        try(PreparedStatement stmt = conn.prepareStatement(sql)){
+            stmt.setInt(1, client);
+            stmt.setInt(2, profile);
+            ResultSet rs = stmt.executeQuery();
+            return rs.next();
+        } catch (RuntimeException | SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     // gets the number of ingoing friend requests
     public int getNumberOfRequestsIngoing(int client){
         String sql = """
                 SELECT COUNT(*) FROM friends
                 WHERE user2_id = ?
-                AND status ='pending'
+                AND status ='PENDING'
                 """;
         try(PreparedStatement stmt = conn.prepareStatement(sql)){
             stmt.setInt(1, client);
@@ -148,7 +184,7 @@ public class FriendsDAO {
         String sql = """
                 SELECT COUNT(*) FROM friends
                 WHERE user1_id = ?
-                AND status ='pending'
+                AND status ='PENDING'
                 """;
         try(PreparedStatement stmt = conn.prepareStatement(sql)){
             stmt.setInt(1, client);
@@ -166,7 +202,7 @@ public class FriendsDAO {
         String sql = """
                 SELECT user1_id FROM friends
                 WHERE user2_id = ?
-                AND status ='pending'
+                AND status ='PENDING'
                 """;
 
         List<Integer> listOfUsers = new ArrayList<>();
@@ -187,7 +223,7 @@ public class FriendsDAO {
         String sql = """
                 SELECT user2_id FROM friends
                 WHERE user1_id = ?
-                AND status ='pending'
+                AND status ='PENDING'
                 """;
 
         List<Integer> listOfUsers = new ArrayList<>();

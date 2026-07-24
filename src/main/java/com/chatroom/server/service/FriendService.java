@@ -3,7 +3,9 @@ package com.chatroom.server.service;
 import com.chatroom.server.dao.FriendsDAO;
 import com.chatroom.server.dao.UserDAO;
 
-import com.chatroom.server.models.FriendStatus;
+import com.chatroom.common.*;
+
+import java.util.List;
 
 public class FriendService {
 
@@ -30,7 +32,35 @@ public class FriendService {
         return friendsDAO.removeUser(client);
     }
 
+    public boolean acceptUser(int client, int profile){
+        return friendsDAO.acceptUser(client, profile);
+    }
+
     public int checkPending(int client){
         return friendsDAO.checkPending(client);
+    }
+
+    public boolean checkIngoingFromOneUser(int client, int profile) {
+        return friendsDAO.checkIngoingFromOneUser(client, profile);
+    }
+
+    public boolean checkOutGoingFromOneUser(int client, int profile){
+        return friendsDAO.checkOutgoingToOneUser(client, profile);
+    }
+
+    public int checkNumberOfIngoingRequests(int client){
+        return friendsDAO.getNumberOfRequestsIngoing(client);
+    }
+
+    public int checkNumberOfOutgoingRequests(int client){
+        return friendsDAO.getNumberOfRequestsOutgoing(client);
+    }
+
+    public List<Integer> getListOfRequestsIngoing(int client){
+        return friendsDAO.getListOfRequestsIngoing(client);
+    }
+
+    public List<Integer> getListOfRequestsOutgoing(int client){
+        return friendsDAO.getListOfRequestsOutgoing(client);
     }
 }

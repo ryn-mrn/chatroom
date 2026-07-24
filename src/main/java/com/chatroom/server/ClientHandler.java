@@ -3,9 +3,7 @@ package com.chatroom.server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import com.chatroom.common.*;
-import com.chatroom.server.models.FriendStatus;
 import com.chatroom.server.models.Session;
 import com.chatroom.server.service.*;
 
@@ -28,13 +26,21 @@ public class ClientHandler implements Runnable {
     private String clientUsername = "";
     private Session session;
     private int clientID = -1;
-    private record FriendContext(int clientID, int profileID, FriendStatus status) {}
+    private record FriendContext(int clientID, int profileID, FriendStatus status, String ingoingOutgoing) {}
 
     private FriendContext getFriendContext(Message message){
         int clientID = authService.getUserID(clientUsername);
         int profileID = authService.getUserID(message.getUsername());
         FriendStatus status = friendService.getStatus(clientID, profileID);
-        return new FriendContext(clientID, profileID, status);
+        String ingoingOutgoing = "";
+        if(status.equals(FriendStatus.PENDING)){
+            if(friendService.checkIngoingFromOneUser(clientID, profileID)){
+                ingoingOutgoing = "ingoing";
+            } else {
+                ingoingOutgoing = "outgoing";
+            }
+        }
+        return new FriendContext(clientID, profileID, status, ingoingOutgoing);
     }
 
     public ClientHandler(Socket socket, List<PrintWriter> clients,
@@ -125,6 +131,7 @@ public class ClientHandler implements Runnable {
             case ADD -> handleAdd(message, out);
             case BLOCK -> handleBlock(message, out);
             case REMOVE -> handleRemove(message, out);
+            case ACCEPT -> handleAccept(message, out);
             case PICTURE -> handlePicture(message, out);
             case PROFILE_REQUEST -> handleProfileRequest(out);
             case INBOX -> handleInbox(out);
@@ -144,6 +151,7 @@ public class ClientHandler implements Runnable {
             session = authService.createSession(username);
             // sets the username after logging in
             this.clientUsername = session.getUsername();
+            this.clientID = authService.getUserID(this.clientUsername);
             // send login reply and session id to the user
             // e.g "LOGIN_SUCCESS ioef89s7f98dsf90sfds90f", all sent as one
             System.out.println(session.getSessionID());
@@ -209,10 +217,16 @@ public class ClientHandler implements Runnable {
 
     // get the friend context to see if they are added / blocked / etc.
     private void handleProfileOpen(Message message, PrintWriter out){
+        FriendContext ctx = getFriendContext(message);
+        Message msg = new Message();
+        msg.setType(MessageType.PROFILE_RESPONSE);
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("status", ctx.status);
+        payload.put("io", ctx.ingoingOutgoing);
+        msg.setPayload(payload);
         log.debug("Profile opened");
         // sends the two user's status back to the user who opened the profile
-        FriendContext ctx = getFriendContext(message);
-        out.println(ctx.status());
+        out.println(msg);
     }
 
     private void handleAdd(Message message, PrintWriter out){
@@ -221,8 +235,6 @@ public class ClientHandler implements Runnable {
         if(ctx.status == FriendStatus.NO_INTERACTION) {
             log.info("Friend request {}", friendService.addFriend(ctx.clientID(), ctx.profileID()));
             out.println("PENDING");
-
-
             // get the user's socket to send the message
             PrintWriter targetOut = onlineUsers.get(ctx.profileID());
             if (targetOut != null) {
@@ -258,11 +270,22 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    // handles the accepting of a friend request
+    private void handleAccept(Message message, PrintWriter out){
+        log.debug("Accept pressed");
+        FriendContext ctx = getFriendContext(message);
+        if(ctx.status() == FriendStatus.PENDING || friendService.checkIngoingFromOneUser(ctx.clientID, ctx.profileID)){
+            log.info("Accepted {}", friendService.acceptUser(ctx.clientID(), ctx.profileID()));
+            // send message back to the client so the UI changes
+        } else {
+            log.debug("Error accepting {} and {}", ctx.clientID(), ctx.profileID());
+        }
+    }
+
     // for profile pictures at the moment
     private void handlePicture(Message message, PrintWriter out){
         // needs serialized - deserialized. Server should have a GUI itself...
         log.debug("Picture sent");
-
         Optional<Session> validated = authService.validateSession(message.getSessionID());
         System.out.println(validated);
         if (validated.isEmpty()) {
